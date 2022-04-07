@@ -1,3 +1,7 @@
+
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Business.DependencyResolvers.Autofac;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace WebApi
 {
@@ -16,8 +21,14 @@ namespace WebApi
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        //Burasý yayýn noktasýnda serverle ilgili konfigürasoynun olduðu yer.
+        public static IHostBuilder CreateHostBuilder(string[] args) => //Dat net e ýoc yapýlandýrmasý olarak AutofacBusinessModule yi kullanacaðýmýzý söylüyoruz.
             Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureContainer<Autofac.ContainerBuilder>(builder=>
+                {
+                    builder.RegisterModule(new AutofacBusinessModule());
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
